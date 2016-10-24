@@ -84,15 +84,22 @@
 
 
 
-<meta name="description">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Wren's Blog">
-<meta property="og:url" content="http://lihuaiyuan.github.io/index.html">
+<meta name="description" content="SpringBoot启动的过程本期主要是通过观察源码，了解spring boot是如何扫描和加载bean的，与本重点无关的代码简要概括　　首先是initialize，这个阶段主要分三步  
+
+向ClassLoader中增添两个spring framework的核心类javax.servlet.Servlet和org.springframework.web.context.ConfigurableW">
+<meta property="og:type" content="article">
+<meta property="og:title" content="spring学习二">
+<meta property="og:url" content="http://lihuaiyuan.github.io/2016/10/24/spring学习笔记二/index.html">
 <meta property="og:site_name" content="Wren's Blog">
-<meta property="og:description">
+<meta property="og:description" content="SpringBoot启动的过程本期主要是通过观察源码，了解spring boot是如何扫描和加载bean的，与本重点无关的代码简要概括　　首先是initialize，这个阶段主要分三步  
+
+向ClassLoader中增添两个spring framework的核心类javax.servlet.Servlet和org.springframework.web.context.ConfigurableW">
+<meta property="og:updated_time" content="2016-10-24T18:58:53.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Wren's Blog">
-<meta name="twitter:description">
+<meta name="twitter:title" content="spring学习二">
+<meta name="twitter:description" content="SpringBoot启动的过程本期主要是通过观察源码，了解spring boot是如何扫描和加载bean的，与本重点无关的代码简要概括　　首先是initialize，这个阶段主要分三步  
+
+向ClassLoader中增添两个spring framework的核心类javax.servlet.Servlet和org.springframework.web.context.ConfigurableW">
 
 
 
@@ -110,7 +117,7 @@
   };
 </script>
 
-  <title> Wren's Blog </title>
+  <title> spring学习二 | Wren's Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -131,9 +138,7 @@
     
   
 
-  <div class="container one-collumn sidebar-position-left 
-   page-home 
- ">
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -210,9 +215,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
   
@@ -232,10 +237,7 @@
             
             
               
-                
-                <a class="post-title-link" href="/blog/2016/10/24/spring学习笔记二/" itemprop="url">
-                  spring学习二
-                </a>
+                spring学习二
               
             
           </h1>
@@ -275,9 +277,7 @@
       
 
       
-        
-          
-            <p>SpringBoot启动的过程<br>本期主要是通过观察源码，了解spring boot是如何扫描和加载bean的，与本重点无关的代码简要概括　　<br>首先是initialize，这个阶段主要分三步  </p>
+        <p>SpringBoot启动的过程<br>本期主要是通过观察源码，了解spring boot是如何扫描和加载bean的，与本重点无关的代码简要概括　　<br>首先是initialize，这个阶段主要分三步  </p>
 <ul>
 <li>向ClassLoader中增添两个spring framework的核心类javax.servlet.Servlet和org.springframework.web.context.ConfigurableWebApplicationContext</li>
 <li>设置 applicationListener</li>
@@ -298,16 +298,19 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">// Do not initialize FactoryBeans here: We need to leave all regular beans</span><br><span class="line">// uninitialized to let the bean factory post-processors apply to them!</span><br><span class="line">String[] postProcessorNames =</span><br><span class="line">      beanFactory.getBeanNamesForType(BeanFactoryPostProcessor.class, true, false);</span><br><span class="line"></span><br><span class="line">// Separate between BeanFactoryPostProcessors that implement PriorityOrdered,</span><br><span class="line">// Ordered, and the rest.</span><br><span class="line">List&lt;BeanFactoryPostProcessor&gt; priorityOrderedPostProcessors = new ArrayList&lt;BeanFactoryPostProcessor&gt;();</span><br><span class="line">List&lt;String&gt; orderedPostProcessorNames = new ArrayList&lt;String&gt;();</span><br><span class="line">List&lt;String&gt; nonOrderedPostProcessorNames = new ArrayList&lt;String&gt;();</span><br><span class="line">for (String ppName : postProcessorNames) &#123;</span><br><span class="line">   if (processedBeans.contains(ppName)) &#123;</span><br><span class="line">      // skip - already processed in first phase above</span><br><span class="line">   &#125;</span><br><span class="line">   else if (beanFactory.isTypeMatch(ppName, PriorityOrdered.class)) &#123;</span><br><span class="line">      priorityOrderedPostProcessors.add(beanFactory.getBean(ppName, BeanFactoryPostProcessor.class));</span><br><span class="line">   &#125;</span><br><span class="line">   else if (beanFactory.isTypeMatch(ppName, Ordered.class)) &#123;</span><br><span class="line">      orderedPostProcessorNames.add(ppName);</span><br><span class="line">   &#125;</span><br><span class="line">   else &#123;</span><br><span class="line">      nonOrderedPostProcessorNames.add(ppName);</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// First, invoke the BeanFactoryPostProcessors that implement PriorityOrdered.</span><br><span class="line">sortPostProcessors(beanFactory, priorityOrderedPostProcessors);</span><br><span class="line">invokeBeanFactoryPostProcessors(priorityOrderedPostProcessors, beanFactory);</span><br><span class="line"></span><br><span class="line">// Next, invoke the BeanFactoryPostProcessors that implement Ordered.</span><br><span class="line">List&lt;BeanFactoryPostProcessor&gt; orderedPostProcessors = new ArrayList&lt;BeanFactoryPostProcessor&gt;();</span><br><span class="line">for (String postProcessorName : orderedPostProcessorNames) &#123;</span><br><span class="line">   orderedPostProcessors.add(beanFactory.getBean(postProcessorName, BeanFactoryPostProcessor.class));</span><br><span class="line">&#125;</span><br><span class="line">sortPostProcessors(beanFactory, orderedPostProcessors);</span><br><span class="line">invokeBeanFactoryPostProcessors(orderedPostProcessors, beanFactory);</span><br><span class="line"></span><br><span class="line">// Finally, invoke all other BeanFactoryPostProcessors.</span><br><span class="line">List&lt;BeanFactoryPostProcessor&gt; nonOrderedPostProcessors = new ArrayList&lt;BeanFactoryPostProcessor&gt;();</span><br><span class="line">for (String postProcessorName : nonOrderedPostProcessorNames) &#123;</span><br><span class="line">   nonOrderedPostProcessors.add(beanFactory.getBean(postProcessorName, BeanFactoryPostProcessor.class));</span><br><span class="line">&#125;</span><br><span class="line">invokeBeanFactoryPostProcessors(nonOrderedPostProcessors, beanFactory);</span><br><span class="line"></span><br><span class="line">// Clear cached merged bean definitions since the post-processors might have</span><br><span class="line">// modified the original metadata, e.g. replacing placeholders in values...</span><br><span class="line">beanFactory.clearMetadataCache();</span><br></pre></td></tr></table></figure>
 <p>待续…</p>
 
-          
+      
+    </div>
+
+    <div>
+      
         
       
     </div>
 
     <div>
       
-    </div>
+        
 
-    <div>
       
     </div>
 
@@ -315,142 +318,32 @@
       
 
       
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
             
+              <a href="/blog/2016/05/31/Android架构的思考/" rel="next" title="SpringBoot 学习一">
+                <i class="fa fa-chevron-left"></i> SpringBoot 学习一
+              </a>
             
-              
-                
-                <a class="post-title-link" href="/blog/2016/05/31/Android架构的思考/" itemprop="url">
-                  SpringBoot 学习一
-                </a>
-              
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
             
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-05-31T23:32:58+08:00" content="2016-05-31">
-              2016-05-31
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
+          </div>
         </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          
-            <p>1.准备活动<br>Step 1: 你需要搭建一个简单的spring boot应用　　<br><em>Action:</em>　　</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">    $git clone https://github.com/spring-guides/gs-spring-boot.git</span><br><span class="line">    $cd gs-spring-boot</span><br><span class="line">    $mkdir -p src/main/java/hello</span><br><span class="line">    touch pom.xml</span><br><span class="line">```  </span><br><span class="line">pom.xml内容如下   </span><br><span class="line"></span><br><span class="line">    &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span><br><span class="line">    xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;</span><br><span class="line">    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;</span><br><span class="line"></span><br><span class="line">    &lt;groupId&gt;org.springframework&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;gs-spring-boot&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;0.1.0&lt;/version&gt;</span><br><span class="line"></span><br><span class="line">    &lt;parent&gt;</span><br><span class="line">        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">        &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;</span><br><span class="line">        &lt;version&gt;1.4.1.RELEASE&lt;/version&gt;</span><br><span class="line">    &lt;/parent&gt;</span><br><span class="line"></span><br><span class="line">    &lt;dependencies&gt;</span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;</span><br><span class="line">        &lt;/dependency&gt;</span><br><span class="line">    &lt;/dependencies&gt;</span><br><span class="line"></span><br><span class="line">    &lt;properties&gt;</span><br><span class="line">        &lt;java.version&gt;1.8&lt;/java.version&gt;</span><br><span class="line">    &lt;/properties&gt;</span><br><span class="line"></span><br><span class="line">    &lt;build&gt;</span><br><span class="line">        &lt;plugins&gt;</span><br><span class="line">            &lt;plugin&gt;</span><br><span class="line">                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">                &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;</span><br><span class="line">            &lt;/plugin&gt;</span><br><span class="line">        &lt;/plugins&gt;</span><br><span class="line">    &lt;/build&gt;</span><br><span class="line">    &lt;/project&gt;  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">__注意:__</span><br><span class="line"></span><br><span class="line">* 凡是用到spring boot的项目，必须有父pomspring-boot-starter-parent</span><br><span class="line">* 如果是spring web项目，需要依赖spring-boot-starter-web，如果依赖其他spring工具，则需要依赖对应的spring-boot-starter-XXX</span><br><span class="line">* build段需要引用插件spring-boot-maven-plugin</span><br><span class="line">* pom中的java版本根据本地jdk版本调整，也可以是1.7</span><br><span class="line"></span><br><span class="line">这些就是引用spring boot最基础的条件</span><br><span class="line"></span><br><span class="line">然后新建两个类</span><br><span class="line">src/main/java/hello/HelloController.java</span><br></pre></td></tr></table></figure>
-<p>package hello;</p>
-<p>import org.springframework.web.bind.annotation.RestController;import org.springframework.web.bind.annotation.RequestMapping;</p>
-<p>@RestControllerpublic class HelloController {</p>
-<pre><code>@RequestMapping(&quot;/&quot;)
-public String index() {
-    return &quot;Greetings from Spring Boot!&quot;;
-}
-</code></pre><p>}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">src/main/java/hello/Application.java</span><br></pre></td></tr></table></figure></p>
-<p>package hello;</p>
-<p>import java.util.Arrays;</p>
-<p>import org.springframework.boot.SpringApplication;import org.springframework.boot.autoconfigure.SpringBootApplication;import org.springframework.context.ApplicationContext;</p>
-<p>@SpringBootApplicationpublic class Application {</p>
-<pre><code>public static void main(String[] args) {
-    ApplicationContext ctx = SpringApplication.run(Application.class, args);
-
-    System.out.println(&quot;Let&apos;s inspect the beans provided by Spring Boot:&quot;);
-
-    String[] beanNames = ctx.getBeanDefinitionNames();
-    Arrays.sort(beanNames);
-    for (String beanName : beanNames) {
-        System.out.println(beanName);
-    }
-}
-</code></pre><p>}<br>```</p>
-<p>到工程根目录下运行mvn package，如果能通过，这一步就完成了。</p>
-<hr>
-<p>Step 2: 你需要spring framework的源代码<br><em>Action:</em><br>根据你的版本号去<br><a href="https://github.com/spring-projects/spring-framework/tags" target="_blank" rel="external">https://github.com/spring-projects/spring-framework/tags</a><br>上面下载spring source code，之所以这么做是因为maven默认拉的代码是经过轻度混淆的<br>注：笔者spring-framework版本是4.3.2</p>
-<p>就可以用IDE打开这个工程开始debug Application.java。步步追踪去发现spring boot是如何启动</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </article>
 
 
-    
-  </section>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -458,6 +351,10 @@ public String index() {
 
 
           
+  <div class="comments" id="comments">
+    
+  </div>
+
 
         </div>
         
@@ -477,8 +374,17 @@ public String index() {
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel  sidebar-panel-active ">
+      <section class="site-overview sidebar-panel ">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/blog/images/avatar.jpg"
@@ -514,6 +420,17 @@ public String index() {
 
       </section>
 
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <p class="post-toc-empty">此文章未包含目录</p>
+            
+          </div>
+        </section>
       
 
     </div>
@@ -610,6 +527,10 @@ public String index() {
   
 
   
+  <script type="text/javascript" src="/blog/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/blog/js/src/post-details.js?v=5.0.1"></script>
+
+
 
   
 
